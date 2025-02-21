@@ -1,10 +1,12 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       required: true,
       minLength: 4,
+      maxLength: 50,
     },
     lastName: {
       type: String,
@@ -32,11 +34,21 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Email is not valid " + value);
+        }
+      },
     },
     photoUrl: {
       type: String,
       default:
         "https://cdn.pixabay.com/photo/2013/07/12/16/36/man-151216_640.png",
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Email is not valid " + value);
+        }
+      },
     },
     about: {
       type: String,
@@ -44,6 +56,7 @@ const userSchema = new mongoose.Schema(
     },
     skills: {
       type: [String],
+      max: 10,
     },
   },
   { timestamps: true }
