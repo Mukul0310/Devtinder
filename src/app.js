@@ -3,6 +3,8 @@ const connectDB = require("./config/database");
 const app = express();
 const User = require("./models/user");
 
+require("dotenv").config();
+
 //Middleware to convert json on to js obj
 app.use(express.json());
 
@@ -15,7 +17,7 @@ app.post("/signup", async (req, res) => {
     await user.save();
     res.send("User added successfully");
   } catch (err) {
-    res.status(500).send("Something went wrong!");
+    res.status(500).send("Something went wrong! " + err.message);
   }
 });
 
@@ -60,10 +62,10 @@ app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
   try {
-    await User.findByIdAndUpdate(userId, data);
+    await User.findByIdAndUpdate(userId, data, { runValidators: true });
     res.send("User Updated successfully");
-  } catch {
-    res.status(400).send("Something went wrong");
+  } catch (err) {
+    res.status(400).send("Something went wrong" + err.message);
   }
 });
 
